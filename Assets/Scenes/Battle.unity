@@ -220,8 +220,9 @@ GameObject:
   m_Component:
   - component: {fileID: 180055183}
   - component: {fileID: 180055182}
-  - component: {fileID: 180055181}
-  - component: {fileID: 180055184}
+  - component: {fileID: 180055186}
+  - component: {fileID: 180055185}
+  - component: {fileID: 180055187}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -229,19 +230,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &180055181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 180055180}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8117ea19f330acd4ba6d9f00cb68ff51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
 --- !u!212 &180055182
 SpriteRenderer:
   serializedVersion: 2
@@ -316,8 +304,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!60 &180055184
-PolygonCollider2D:
+--- !u!50 &180055185
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180055180}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
+--- !u!114 &180055186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180055180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd550f443486a4c48959b2950daf8f0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  moveSpeed: 5
+  movementBoundsCollider: {fileID: 180055187}
+  movementBoundsRect:
+    serializedVersion: 2
+    x: -8
+    y: -4.5
+    width: 16
+    height: 9
+  health: 20
+--- !u!61 &180055187
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -360,22 +396,8 @@ PolygonCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0.06529747, y: 0.2499251}
-      - {x: 0.0021574777, y: 0.21050899}
-      - {x: -0.06486987, y: 0.2539969}
-      - {x: -0.17738059, y: 0.24885008}
-      - {x: -0.24853733, y: 0.17394324}
-      - {x: -0.25, y: 0.010953652}
-      - {x: -0.1916567, y: -0.07058321}
-      - {x: -0.020508982, y: -0.24853736}
-      - {x: 0.019284764, y: -0.25146264}
-      - {x: 0.2020848, y: -0.053114448}
-      - {x: 0.25585034, y: 0.02972943}
-      - {x: 0.25877577, y: 0.1639432}
-      - {x: 0.17295739, y: 0.25146264}
-  m_UseDelaunayMesh: 0
+  m_Size: {x: 0.5, y: 0.5}
+  m_EdgeRadius: 0
 --- !u!1 &287658673
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,6 +407,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 287658674}
+  - component: {fileID: 287658675}
   m_Layer: 0
   m_Name: BattleZone
   m_TagString: Untagged
@@ -411,6 +434,67 @@ Transform:
   - {fileID: 1968817382}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!60 &287658675
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 287658673}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -1.9566977, y: -1.7251955}
+      - {x: -2.0120583, y: 1.6907065}
+      - {x: -1.9796083, y: -1.7631025}
+      - {x: -0.033370256, y: -1.8226097}
+      - {x: 1.9873481, y: -1.8075379}
+      - {x: 2.0087247, y: -0.3821473}
+      - {x: 2.0078795, y: -0.18090713}
+      - {x: 2.0074856, y: -0.087103605}
+      - {x: 1.9391677, y: 1.7135623}
+      - {x: -1.9772282, y: 1.6811147}
+      - {x: 1.9248036, y: 1.675546}
+      - {x: 1.9537947, y: -0.3960837}
+      - {x: 1.9379945, y: -1.722492}
+      - {x: -0.024942517, y: -1.763103}
+  m_UseDelaunayMesh: 1
 --- !u!1 &311781151
 GameObject:
   m_ObjectHideFlags: 0
@@ -573,7 +657,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.3019608, g: 0.5686275, b: 0.3759012, a: 0}
+  m_BackGroundColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
