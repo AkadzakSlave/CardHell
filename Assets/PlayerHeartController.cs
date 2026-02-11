@@ -17,6 +17,9 @@ public class PlayerHeartController : MonoBehaviour
     public int maxHP = 30;
     public int hp;
 
+    [Header("References")]
+    [SerializeField] private BattleController battleController;
+
     private Rigidbody2D rb;
     private Vector2 moveInput;
 
@@ -26,7 +29,12 @@ public class PlayerHeartController : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.gravityScale = 0f;
 
-        hp = Mathf.Clamp(hp <= 0 ? maxHP : hp, 0, maxHP);
+        if (battleController == null)
+        {
+            battleController = FindFirstObjectByType<BattleController>();
+        }
+
+        hp = maxHP;
     }
 
     private void Update()
@@ -54,15 +62,7 @@ public class PlayerHeartController : MonoBehaviour
 
         if (hp <= 0)
         {
-            BattleController battle = FindFirstObjectByType<BattleController>();
-            if (battle != null)
-            {
-                battle.OnPlayerDied();
-            }
-            else
-            {
-                Debug.LogWarning("BattleController not found. Cannot call OnPlayerDied().");
-            }
+            battleController?.OnPlayerDied();
         }
     }
 
@@ -81,7 +81,7 @@ public class PlayerHeartController : MonoBehaviour
             return Rect.MinMaxRect(center.x - half.x, center.y - half.y, center.x + half.x, center.y + half.y);
         }
 
-        Vector2 fallbackCenter = transform.position;
+        Vector2 fallbackCenter = rb != null ? rb.position : (Vector2)transform.position;
         Vector2 fallbackHalf = arenaSize * 0.5f;
         return Rect.MinMaxRect(
             fallbackCenter.x - fallbackHalf.x,
