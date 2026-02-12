@@ -298,15 +298,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f366a9c8a9dbf6a46b3bfbb2239e3ecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleController
-  enemyAttackSpawner: {fileID: 98194771}
+  startButton: {fileID: 1790565238}
+  actButton: {fileID: 665116886}
+  enemyVisual: {fileID: 0}
+  attackDirector: {fileID: 0}
   friendship: 0
-  battleActive: 0
-  onBattleWon:
+  OnStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  onBattleLost:
+  OnFriendshipChanged:
     m_PersistentCalls:
       m_Calls: []
+  currentState: 0
 --- !u!4 &98194770
 Transform:
   m_ObjectHideFlags: 0
@@ -335,12 +338,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackSpawner
   bulletPool: {fileID: 98194772}
-  player: {fileID: 180055188}
+  arenaBounds: {fileID: 0}
   spawnInterval: 0.15
   waveDuration: 10
   bulletSpeed: 8
   bulletLifeTime: 6
-  spawnOffsetY: 0.5
 --- !u!114 &98194772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -354,7 +356,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletPool
   bulletPrefab: {fileID: 1112242866484551450, guid: ba8806a763950744cbccae9e7f8fbc52, type: 3}
-  initialSize: 32
+  prewarmCount: 80
+  bulletsRoot: {fileID: 0}
 --- !u!1 &110539141
 GameObject:
   m_ObjectHideFlags: 0
@@ -626,12 +629,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHeartController
   moveSpeed: 5
-  arenaBoundsCollider: {fileID: 287658675}
-  arenaTransform: {fileID: 0}
-  arenaSize: {x: 12, y: 7}
+  arenaBounds: {fileID: 0}
   maxHP: 30
-  hp: 0
-  battleController: {fileID: 98194769}
+  invincibilityDuration: 0.5
 --- !u!1 &287658673
 GameObject:
   m_ObjectHideFlags: 0
@@ -1135,7 +1135,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 665116887}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 98194769}
+        m_TargetAssemblyTypeName: BattleController, Assembly-CSharp
+        m_MethodName: OnActButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &665116887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1778,6 +1790,116 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1236339484
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1236339487}
+  - component: {fileID: 1236339486}
+  - component: {fileID: 1236339485}
+  m_Layer: 0
+  m_Name: enemy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!212 &1236339485
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1236339484}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+--- !u!114 &1236339486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1236339484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bb41fb51db0f6441bc082b20997b2ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackSpawner
+  bulletPool: {fileID: 0}
+  arenaBounds: {fileID: 0}
+  spawnInterval: 0.15
+  waveDuration: 10
+  bulletSpeed: 8
+  bulletLifeTime: 6
+--- !u!4 &1236339487
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1236339484}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.05, y: 2.46, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1422601957
 GameObject:
   m_ObjectHideFlags: 0
@@ -2033,7 +2155,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 98194769}
         m_TargetAssemblyTypeName: BattleController, Assembly-CSharp
-        m_MethodName: StartBattle
+        m_MethodName: OnStartButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2274,3 +2396,4 @@ SceneRoots:
   - {fileID: 311781152}
   - {fileID: 760994036}
   - {fileID: 1198466165}
+  - {fileID: 1236339487}
