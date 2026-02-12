@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c28318d0f8ee85d458286196fc9101eb, type: 3}
   m_Name: Homing
   m_EditorClassIdentifier: Assembly-CSharp::AttackPatternData
-  id: Rain
-  waveDuration: 4
-  spawnInterval: 0.3
+  id: Homing
+  waveDuration: 3
+  spawnInterval: 0.5
   bulletSpeed: 5
   bulletsPerSpawn: 8
   extraParamA: 0

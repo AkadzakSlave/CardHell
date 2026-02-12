@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c28318d0f8ee85d458286196fc9101eb, type: 3}
   m_Name: pointburst
   m_EditorClassIdentifier: Assembly-CSharp::AttackPatternData
-  id: Rain
-  waveDuration: 4
-  spawnInterval: 0.3
-  bulletSpeed: 5
-  bulletsPerSpawn: 8
+  id: PointBurst
+  waveDuration: 3
+  spawnInterval: 0.8
+  bulletSpeed: 4
+  bulletsPerSpawn: 12
   extraParamA: 0
   extraParamB: 0
