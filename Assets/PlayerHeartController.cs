@@ -1,100 +1,152 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Handles heart movement and damage i-frames with blink feedback.
+/// If PlayerHealth exists on the same object, this controller writes damage there.
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerHeartController : MonoBehaviour
 {
     [Header("Movement")]
-    public float moveSpeed = 5f;
-
-    [Tooltip("Границы арены через BoxCollider2D (рекомендуется).")]
-    [SerializeField] private BoxCollider2D arenaBoundsCollider;
-
-    [Tooltip("Фолбэк: Transform арены (центр). Используется вместе с Arena Size, если BoxCollider2D не задан.")]
-    [SerializeField] private Transform arenaTransform;
-    [SerializeField] private Vector2 arenaSize = new Vector2(12f, 7f);
+    [SerializeField] private float moveSpeed = 6f;
+    [SerializeField] private ArenaBounds arenaBounds;
 
     [Header("Health")]
-    public int maxHP = 30;
-    public int hp;
+    [SerializeField] private int maxHP = 20;
+    [SerializeField] private int hp;
+    [SerializeField] private float invincibleDuration = 0.5f;
+    [SerializeField] private float blinkInterval = 0.08f;
 
     [Header("References")]
-    [SerializeField] private BattleController battleController;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
+    public event Action<int, int> OnHealthChanged;
 
     private Rigidbody2D rb;
+    private PlayerHealth playerHealth;
     private Vector2 moveInput;
+    private bool isInvincible;
+    private Coroutine invincibilityRoutine;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.bodyType = RigidbodyType2D.Kinematic;
         rb.gravityScale = 0f;
 
-        if (battleController == null)
+        if (spriteRenderer == null)
         {
-            battleController = FindFirstObjectByType<BattleController>();
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
-        hp = maxHP;
+        playerHealth = GetComponent<PlayerHealth>();
+
+        if (playerHealth != null)
+        {
+            playerHealth.SetMaxHP(maxHP);
+            hp = playerHealth.hp;
+            maxHP = playerHealth.maxHP;
+            playerHealth.OnHealthChanged += HandleHealthChangedFromComponent;
+        }
+        else
+        {
+            hp = Mathf.Clamp(maxHP, 0, maxHP);
+            NotifyHealthChanged();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (playerHealth != null)
+        {
+            playerHealth.OnHealthChanged -= HandleHealthChangedFromComponent;
+        }
     }
 
     private void Update()
     {
-        moveInput.x = Input.GetAxisRaw("Horizontal");
-        moveInput.y = Input.GetAxisRaw("Vertical");
-        moveInput = Vector2.ClampMagnitude(moveInput, 1f);
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+        moveInput = new Vector2(x, y).normalized;
     }
 
     private void FixedUpdate()
     {
-        Vector2 target = rb.position + moveInput * moveSpeed * Time.deltaTime;
-        rb.MovePosition(ClampToArena(target));
+        Vector2 newPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
+
+        if (arenaBounds != null)
+        {
+            Rect rect = arenaBounds.GetWorldRect();
+            newPosition.x = Mathf.Clamp(newPosition.x, rect.xMin, rect.xMax);
+            newPosition.y = Mathf.Clamp(newPosition.y, rect.yMin, rect.yMax);
+        }
+
+        rb.MovePosition(newPosition);
     }
 
     public void TakeDamage(int amount)
     {
-        if (amount <= 0 || hp <= 0)
+        if (amount <= 0 || isInvincible)
         {
             return;
         }
 
-        hp = Mathf.Max(0, hp - amount);
-        Debug.Log($"Player HP: {hp}/{maxHP}");
-
-        if (hp <= 0)
+        if (playerHealth != null)
         {
-            battleController?.OnPlayerDied();
+            playerHealth.TakeDamage(amount);
+            hp = playerHealth.hp;
+            maxHP = playerHealth.maxHP;
         }
+        else
+        {
+            hp = Mathf.Clamp(hp - amount, 0, maxHP);
+            NotifyHealthChanged();
+        }
+
+        if (invincibilityRoutine != null)
+        {
+            StopCoroutine(invincibilityRoutine);
+        }
+
+        invincibilityRoutine = StartCoroutine(InvincibilityRoutine());
     }
 
-    public Rect GetArenaRect()
+    private IEnumerator InvincibilityRoutine()
     {
-        if (arenaBoundsCollider != null)
+        isInvincible = true;
+        float elapsed = 0f;
+
+        while (elapsed < invincibleDuration)
         {
-            Bounds b = arenaBoundsCollider.bounds;
-            return Rect.MinMaxRect(b.min.x, b.min.y, b.max.x, b.max.y);
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.enabled = !spriteRenderer.enabled;
+            }
+
+            yield return new WaitForSeconds(blinkInterval);
+            elapsed += blinkInterval;
         }
 
-        if (arenaTransform != null)
+        isInvincible = false;
+
+        if (spriteRenderer != null)
         {
-            Vector2 center = arenaTransform.position;
-            Vector2 half = arenaSize * 0.5f;
-            return Rect.MinMaxRect(center.x - half.x, center.y - half.y, center.x + half.x, center.y + half.y);
+            spriteRenderer.enabled = true;
         }
 
-        Vector2 fallbackCenter = rb != null ? rb.position : (Vector2)transform.position;
-        Vector2 fallbackHalf = arenaSize * 0.5f;
-        return Rect.MinMaxRect(
-            fallbackCenter.x - fallbackHalf.x,
-            fallbackCenter.y - fallbackHalf.y,
-            fallbackCenter.x + fallbackHalf.x,
-            fallbackCenter.y + fallbackHalf.y);
+        invincibilityRoutine = null;
     }
 
-    private Vector2 ClampToArena(Vector2 position)
+    private void HandleHealthChangedFromComponent(int currentHp, int currentMaxHp)
     {
-        Rect rect = GetArenaRect();
-        position.x = Mathf.Clamp(position.x, rect.xMin, rect.xMax);
-        position.y = Mathf.Clamp(position.y, rect.yMin, rect.yMax);
-        return position;
+        hp = currentHp;
+        maxHP = currentMaxHp;
+        NotifyHealthChanged();
+    }
+
+    private void NotifyHealthChanged()
+    {
+        OnHealthChanged?.Invoke(hp, maxHP);
     }
 }
