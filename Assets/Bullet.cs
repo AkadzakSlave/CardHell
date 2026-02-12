@@ -2,88 +2,80 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private float speed = 8f;
-    [SerializeField] private float lifeTime = 5f;
+    public Vector2 velocity;
+    public int damage;
+    public float lifetime;
 
-    private Vector2 direction = Vector2.down;
-    private float timer;
-    private BulletPool ownerPool;
-    private Rect arenaRect;
-    private bool hasArenaRect;
+    private BulletPool pool;
+    private ArenaBounds arenaBounds;
+    private float aliveTime;
+    private const float OutsideMargin = 0.25f;
 
-    public void Launch(Vector2 startPosition, Vector2 moveDirection, float moveSpeed, float maxLifeTime, Rect? optionalArenaRect, BulletPool pool)
+    public void Init(
+        Vector2 position,
+        Vector2 velocity,
+        int damage,
+        float lifetime,
+        BulletPool pool,
+        ArenaBounds arenaBounds)
     {
-        transform.position = startPosition;
-        direction = moveDirection.sqrMagnitude > 0f ? moveDirection.normalized : Vector2.down;
-        speed = moveSpeed;
-        lifeTime = maxLifeTime;
-        ownerPool = pool;
-        timer = 0f;
-
-        if (optionalArenaRect.HasValue)
-        {
-            arenaRect = optionalArenaRect.Value;
-            hasArenaRect = true;
-        }
-        else
-        {
-            hasArenaRect = false;
-        }
-
+        transform.position = position;
+        this.velocity = velocity;
+        this.damage = damage;
+        this.lifetime = lifetime;
+        this.pool = pool;
+        this.arenaBounds = arenaBounds;
+        aliveTime = 0f;
         gameObject.SetActive(true);
     }
 
     private void Update()
     {
-        transform.position += (Vector3)(direction * speed * Time.deltaTime);
-        timer += Time.deltaTime;
+        transform.position += (Vector3)(velocity * Time.deltaTime);
+        aliveTime += Time.deltaTime;
 
-        if (timer >= lifeTime)
+        if (aliveTime >= lifetime)
         {
-            Deactivate();
+            ReturnToPool();
             return;
         }
 
-        if (hasArenaRect)
+        if (arenaBounds != null)
         {
-            Vector2 pos = transform.position;
-            if (!arenaRect.Contains(pos))
+            Rect rect = arenaBounds.GetWorldRect();
+            Rect expanded = Rect.MinMaxRect(
+                rect.xMin - OutsideMargin,
+                rect.yMin - OutsideMargin,
+                rect.xMax + OutsideMargin,
+                rect.yMax + OutsideMargin);
+
+            if (!expanded.Contains(transform.position))
             {
-                Deactivate();
+                ReturnToPool();
             }
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        TryDamagePlayer(other.gameObject);
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        TryDamagePlayer(collision.gameObject);
-    }
-
-    private void TryDamagePlayer(GameObject hit)
-    {
-        PlayerHeartController player = hit.GetComponent<PlayerHeartController>();
+        PlayerHeartController player = other.GetComponent<PlayerHeartController>();
         if (player == null)
         {
-            player = hit.GetComponentInParent<PlayerHeartController>();
+            player = other.GetComponentInParent<PlayerHeartController>();
         }
 
         if (player != null)
         {
-            player.TakeDamage(1);
-            Deactivate();
+            player.TakeDamage(damage);
+            ReturnToPool();
         }
     }
 
-    public void Deactivate()
+    private void ReturnToPool()
     {
-        if (ownerPool != null)
+        if (pool != null)
         {
-            ownerPool.Return(this);
+            pool.Return(this);
         }
         else
         {
