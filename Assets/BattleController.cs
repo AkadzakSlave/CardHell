@@ -1,77 +1,171 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class BattleController : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private EnemyAttackSpawner enemyAttackSpawner;
+    public enum BattleState
+    {
+        Idle,
+        PlayerTurn,
+        EnemyTelegraph,
+        EnemyTurn
+    }
 
-    [Header("Battle State")]
+    [System.Serializable]
+    public class BattleStateChangedEvent : UnityEvent<BattleState> { }
+
+    [System.Serializable]
+    public class FriendshipChangedEvent : UnityEvent<int> { }
+
+    [Header("References")]
+    public Button startButton;
+    public Button actButton;
+    public EnemyVisual enemyVisual;
+    public AttackDirector attackDirector;
+
+    [Header("Stats")]
     [Range(0, 100)]
-    [SerializeField] private int friendship;
-    [SerializeField] private bool battleActive;
+    public int friendship = 0;
 
     [Header("Events")]
-    [SerializeField] private UnityEvent onBattleWon;
-    [SerializeField] private UnityEvent onBattleLost;
+    public BattleStateChangedEvent OnStateChanged;
+    public FriendshipChangedEvent OnFriendshipChanged;
 
-    public int Friendship => friendship;
-    public bool BattleActive => battleActive;
+    [SerializeField] private BattleState currentState = BattleState.Idle;
 
-    public void StartBattle()
+    private Coroutine telegraphRoutine;
+
+    public BattleState CurrentState => currentState;
+
+    private void Awake()
     {
-        friendship = 0;
-        battleActive = true;
-
-        if (enemyAttackSpawner == null)
+        if (startButton != null)
         {
-            enemyAttackSpawner = FindFirstObjectByType<EnemyAttackSpawner>();
+            startButton.onClick.AddListener(OnStartButtonClicked);
         }
 
-        if (enemyAttackSpawner != null)
+        if (actButton != null)
         {
-            enemyAttackSpawner.StartRainWave();
-        }
-        else
-        {
-            Debug.LogError("BattleController: EnemyAttackSpawner not found.");
+            actButton.onClick.AddListener(OnActButtonClicked);
+            actButton.interactable = false;
         }
     }
 
-    public void OnActPressed()
+    private void Start()
     {
-        if (!battleActive)
+        SetState(BattleState.Idle);
+        NotifyFriendshipChanged();
+    }
+
+    private void OnDestroy()
+    {
+        if (startButton != null)
+        {
+            startButton.onClick.RemoveListener(OnStartButtonClicked);
+        }
+
+        if (actButton != null)
+        {
+            actButton.onClick.RemoveListener(OnActButtonClicked);
+        }
+    }
+
+    public void OnStartButtonClicked()
+    {
+        if (currentState == BattleState.Idle)
+        {
+            BeginBattle();
+        }
+    }
+
+    public void BeginBattle()
+    {
+        friendship = 0;
+        NotifyFriendshipChanged();
+
+        if (actButton != null)
+        {
+            actButton.interactable = true;
+        }
+
+        SetState(BattleState.PlayerTurn);
+    }
+
+    public void OnActButtonClicked()
+    {
+        if (currentState != BattleState.PlayerTurn)
         {
             return;
         }
 
         friendship = Mathf.Clamp(friendship + 30, 0, 100);
-        Debug.Log($"Friendship: {friendship}/100");
+        NotifyFriendshipChanged();
 
-        if (friendship >= 100)
+        if (enemyVisual != null)
         {
-            WinBattle();
-        }
-    }
-
-    public void OnPlayerDied()
-    {
-        if (!battleActive)
-        {
-            return;
+            enemyVisual.ShowEmbarrassed(1f);
         }
 
-        battleActive = false;
-        enemyAttackSpawner?.StopAttacks();
-        Debug.Log("Battle lost: player died.");
-        onBattleLost?.Invoke();
+        if (actButton != null)
+        {
+            actButton.interactable = false;
+        }
+
+        SetState(BattleState.EnemyTelegraph);
+
+        if (telegraphRoutine != null)
+        {
+            StopCoroutine(telegraphRoutine);
+        }
+
+        telegraphRoutine = StartCoroutine(EnemyTurnAfterTelegraph());
     }
 
-    private void WinBattle()
+    private IEnumerator EnemyTurnAfterTelegraph()
     {
-        battleActive = false;
-        enemyAttackSpawner?.StopAttacks();
-        Debug.Log("Battle won: friendship reached 100.");
-        onBattleWon?.Invoke();
+        yield return new WaitForSeconds(1f);
+
+        SetState(BattleState.EnemyTurn);
+
+        if (attackDirector == null)
+        {
+            EndEnemyTurn();
+            yield break;
+        }
+
+        bool finished = false;
+        attackDirector.PlayRandomPattern(() => finished = true);
+
+        while (!finished)
+        {
+            yield return null;
+        }
+
+        EndEnemyTurn();
+    }
+
+    private void EndEnemyTurn()
+    {
+        SetState(BattleState.PlayerTurn);
+
+        if (actButton != null)
+        {
+            actButton.interactable = true;
+        }
+
+        telegraphRoutine = null;
+    }
+
+    private void SetState(BattleState newState)
+    {
+        currentState = newState;
+        OnStateChanged?.Invoke(currentState);
+    }
+
+    private void NotifyFriendshipChanged()
+    {
+        OnFriendshipChanged?.Invoke(friendship);
     }
 }
