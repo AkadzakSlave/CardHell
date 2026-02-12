@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -10,19 +11,58 @@ public class PlayerHeartController : MonoBehaviour
 
     [Header("Health")]
     [SerializeField] private int maxHP = 20;
-    [SerializeField] private float invincibilityDuration = 0.5f;
+    [SerializeField] private int hp;
+    [SerializeField] private float invincibleDuration = 0.5f;
+    [SerializeField] private float blinkInterval = 0.08f;
+
+    [Header("References")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private PlayerHealth playerHealth;
+
+    public event Action<int, int> OnHealthChanged;
+
+    public int HP => playerHealth != null ? playerHealth.HP : hp;
+    public int MaxHP => playerHealth != null ? playerHealth.MaxHP : maxHP;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private bool isInvincible;
-
-    public int CurrentHP { get; private set; }
+    private Coroutine invincibilityCoroutine;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
-        CurrentHP = maxHP;
+
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+
+        if (playerHealth == null)
+        {
+            playerHealth = GetComponent<PlayerHealth>();
+        }
+
+        if (playerHealth != null)
+        {
+            playerHealth.SetMaxHP(maxHP);
+            playerHealth.OnHealthChanged += HandlePlayerHealthChanged;
+            HandlePlayerHealthChanged(playerHealth.HP, playerHealth.MaxHP);
+        }
+        else
+        {
+            hp = Mathf.Max(0, maxHP);
+            OnHealthChanged?.Invoke(hp, maxHP);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (playerHealth != null)
+        {
+            playerHealth.OnHealthChanged -= HandlePlayerHealthChanged;
+        }
     }
 
     private void Update()
@@ -46,21 +86,63 @@ public class PlayerHeartController : MonoBehaviour
         rb.MovePosition(newPosition);
     }
 
-    public void TakeDamage(int dmg)
+    public void TakeDamage(int amount)
     {
-        if (dmg <= 0 || isInvincible || CurrentHP <= 0)
+        if (amount <= 0 || isInvincible || HP <= 0)
         {
             return;
         }
 
-        CurrentHP = Mathf.Max(0, CurrentHP - dmg);
-        StartCoroutine(InvincibilityRoutine());
+        if (playerHealth != null)
+        {
+            playerHealth.TakeDamage(amount);
+        }
+        else
+        {
+            hp = Mathf.Clamp(hp - amount, 0, maxHP);
+            OnHealthChanged?.Invoke(hp, maxHP);
+        }
+
+        if (invincibilityCoroutine != null)
+        {
+            StopCoroutine(invincibilityCoroutine);
+        }
+
+        invincibilityCoroutine = StartCoroutine(InvincibilityRoutine());
+    }
+
+    private void HandlePlayerHealthChanged(int currentHp, int currentMaxHP)
+    {
+        hp = currentHp;
+        maxHP = currentMaxHP;
+        OnHealthChanged?.Invoke(currentHp, currentMaxHP);
     }
 
     private IEnumerator InvincibilityRoutine()
     {
         isInvincible = true;
-        yield return new WaitForSeconds(invincibilityDuration);
+        float elapsed = 0f;
+        bool visible = true;
+
+        while (elapsed < invincibleDuration)
+        {
+            elapsed += blinkInterval;
+            visible = !visible;
+
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.enabled = visible;
+            }
+
+            yield return new WaitForSeconds(blinkInterval);
+        }
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+        }
+
         isInvincible = false;
+        invincibilityCoroutine = null;
     }
 }
