@@ -20,21 +20,24 @@ public class BattleController : MonoBehaviour
     public class FriendshipChangedEvent : UnityEvent<int> { }
 
     [Header("References")]
-    public Button startButton;
-    public Button actButton;
-    public EnemyVisual enemyVisual;
-    public AttackDirector attackDirector;
+    [SerializeField] private Button startButton;
+    [SerializeField] private Button actButton;
+    [SerializeField] private EnemyVisual enemyVisual;
+    [SerializeField] private EnemyPresenter enemyPresenter;
+    [SerializeField] private AttackDirector attackDirector;
+
+    [Header("Enemy")]
+    public EnemyData currentEnemy;
 
     [Header("Stats")]
     [Range(0, 100)]
-    public int friendship = 0;
+    public int friendship;
 
     [Header("Events")]
     public BattleStateChangedEvent OnStateChanged;
     public FriendshipChangedEvent OnFriendshipChanged;
 
     [SerializeField] private BattleState currentState = BattleState.Idle;
-
     private Coroutine telegraphRoutine;
 
     public BattleState CurrentState => currentState;
@@ -49,14 +52,19 @@ public class BattleController : MonoBehaviour
         if (actButton != null)
         {
             actButton.onClick.AddListener(OnActButtonClicked);
-            actButton.interactable = false;
         }
     }
 
     private void Start()
     {
         SetState(BattleState.Idle);
+        UpdateButtonsForState();
         NotifyFriendshipChanged();
+
+        if (currentEnemy != null)
+        {
+            LoadEnemy(currentEnemy);
+        }
     }
 
     private void OnDestroy()
@@ -72,25 +80,41 @@ public class BattleController : MonoBehaviour
         }
     }
 
-    public void OnStartButtonClicked()
+    public void LoadEnemy(EnemyData enemy)
     {
-        if (currentState == BattleState.Idle)
-        {
-            BeginBattle();
-        }
-    }
-
-    public void BeginBattle()
-    {
+        currentEnemy = enemy;
         friendship = 0;
         NotifyFriendshipChanged();
 
-        if (actButton != null)
+        if (enemyPresenter != null)
         {
-            actButton.interactable = true;
+            enemyPresenter.ApplyEnemy(currentEnemy);
+        }
+
+        if (telegraphRoutine != null)
+        {
+            StopCoroutine(telegraphRoutine);
+            telegraphRoutine = null;
+        }
+
+        if (attackDirector != null)
+        {
+            attackDirector.StopAttacks();
+        }
+
+        SetState(BattleState.Idle);
+        UpdateButtonsForState();
+    }
+
+    public void OnStartButtonClicked()
+    {
+        if (currentState != BattleState.Idle)
+        {
+            return;
         }
 
         SetState(BattleState.PlayerTurn);
+        UpdateButtonsForState();
     }
 
     public void OnActButtonClicked()
@@ -100,20 +124,31 @@ public class BattleController : MonoBehaviour
             return;
         }
 
-        friendship = Mathf.Clamp(friendship + 30, 0, 100);
+        ActOptionData selectedAct = SelectActOption();
+        if (selectedAct != null)
+        {
+            friendship = Mathf.Clamp(friendship + selectedAct.friendshipDelta, 0, 100);
+            if (!string.IsNullOrEmpty(selectedAct.resultText))
+            {
+                Debug.Log($"ACT: {selectedAct.displayName} -> {selectedAct.resultText}");
+            }
+        }
+
         NotifyFriendshipChanged();
+
+        if (friendship >= 100)
+        {
+            HandleWin();
+            return;
+        }
 
         if (enemyVisual != null)
         {
             enemyVisual.ShowEmbarrassed(1f);
         }
 
-        if (actButton != null)
-        {
-            actButton.interactable = false;
-        }
-
         SetState(BattleState.EnemyTelegraph);
+        UpdateButtonsForState();
 
         if (telegraphRoutine != null)
         {
@@ -127,16 +162,24 @@ public class BattleController : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
 
-        SetState(BattleState.EnemyTurn);
+        if (currentState != BattleState.EnemyTelegraph)
+        {
+            telegraphRoutine = null;
+            yield break;
+        }
 
-        if (attackDirector == null)
+        SetState(BattleState.EnemyTurn);
+        UpdateButtonsForState();
+
+        AttackPatternData pattern = SelectRandomPattern();
+        if (attackDirector == null || pattern == null)
         {
             EndEnemyTurn();
             yield break;
         }
 
         bool finished = false;
-        attackDirector.PlayRandomPattern(() => finished = true);
+        attackDirector.PlayPattern(pattern, () => finished = true);
 
         while (!finished)
         {
@@ -146,16 +189,75 @@ public class BattleController : MonoBehaviour
         EndEnemyTurn();
     }
 
-    private void EndEnemyTurn()
+    protected virtual ActOptionData SelectActOption()
     {
-        SetState(BattleState.PlayerTurn);
-
-        if (actButton != null)
+        if (currentEnemy == null || currentEnemy.actOptions == null)
         {
-            actButton.interactable = true;
+            return null;
         }
 
+        for (int i = 0; i < currentEnemy.actOptions.Count; i++)
+        {
+            if (currentEnemy.actOptions[i] != null)
+            {
+                return currentEnemy.actOptions[i];
+            }
+        }
+
+        return null;
+    }
+
+    private AttackPatternData SelectRandomPattern()
+    {
+        if (currentEnemy == null || currentEnemy.patterns == null || currentEnemy.patterns.Count == 0)
+        {
+            return null;
+        }
+
+        int start = Random.Range(0, currentEnemy.patterns.Count);
+        for (int i = 0; i < currentEnemy.patterns.Count; i++)
+        {
+            AttackPatternData candidate = currentEnemy.patterns[(start + i) % currentEnemy.patterns.Count];
+            if (candidate != null)
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private void EndEnemyTurn()
+    {
         telegraphRoutine = null;
+
+        if (friendship >= 100)
+        {
+            HandleWin();
+            return;
+        }
+
+        SetState(BattleState.PlayerTurn);
+        UpdateButtonsForState();
+    }
+
+    private void HandleWin()
+    {
+        Debug.Log("You Win! Friendship reached 100.");
+
+        if (telegraphRoutine != null)
+        {
+            StopCoroutine(telegraphRoutine);
+            telegraphRoutine = null;
+        }
+
+        if (attackDirector != null)
+        {
+            attackDirector.StopAttacks();
+        }
+
+        SetState(BattleState.Idle);
+        UpdateButtonsForState();
     }
 
     private void SetState(BattleState newState)
@@ -167,5 +269,18 @@ public class BattleController : MonoBehaviour
     private void NotifyFriendshipChanged()
     {
         OnFriendshipChanged?.Invoke(friendship);
+    }
+
+    private void UpdateButtonsForState()
+    {
+        if (startButton != null)
+        {
+            startButton.interactable = currentState == BattleState.Idle && currentEnemy != null;
+        }
+
+        if (actButton != null)
+        {
+            actButton.interactable = currentState == BattleState.PlayerTurn;
+        }
     }
 }
