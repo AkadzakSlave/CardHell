@@ -51,9 +51,11 @@
     <Compile Include="Assets\BulletPool.cs" />
     <Compile Include="Assets\EnemyAttackSpawner.cs" />
     <Compile Include="Assets\ArenaBounds.cs" />
+    <Compile Include="Assets\HpUIController.cs" />
     <Compile Include="Assets\AttackPatternData.cs" />
     <Compile Include="Assets\Bullet.cs" />
     <Compile Include="Assets\BattleController.cs" />
+    <Compile Include="Assets\PlayerHealth.cs" />
     <Compile Include="Assets\PlayerHeartController.cs" />
     <Compile Include="Assets\EnemyVisual.cs" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
