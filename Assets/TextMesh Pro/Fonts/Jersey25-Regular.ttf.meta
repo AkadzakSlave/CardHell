@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 231a3b89331b430498a3c5cbaa1ecdd2
+guid: 1c0a48bfee2b1c94c9d733cdb4186fbf
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - PIPEC TYPEFACE
+  - Jersey 25
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
