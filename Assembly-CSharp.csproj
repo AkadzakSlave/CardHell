@@ -59,6 +59,7 @@
     <Compile Include="Assets\Bullet.cs" />
     <Compile Include="Assets\BattleController.cs" />
     <Compile Include="Assets\EnemyData.cs" />
+    <Compile Include="Assets\BulletProfileData.cs" />
     <Compile Include="Assets\PlayerHealth.cs" />
     <Compile Include="Assets\PlayerHeartController.cs" />
     <Compile Include="Assets\DebugEnemySelectorUI.cs" />

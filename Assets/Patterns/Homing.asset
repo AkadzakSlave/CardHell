@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: Homing
   m_EditorClassIdentifier: Assembly-CSharp::AttackPatternData
   id: Homing
+  type: 1
   waveDuration: 3
   spawnInterval: 0.5
   bulletSpeed: 5
+  bulletDamageOverride: -1
   bulletsPerSpawn: 8
-  extraParamA: 0
-  extraParamB: 0
+  extraA: 0
+  extraB: 0
+  extraC: 0
+  bulletProfile: {fileID: 11400000, guid: 9bb4ebb7439fc564bbc91ba2f336c42f, type: 2}

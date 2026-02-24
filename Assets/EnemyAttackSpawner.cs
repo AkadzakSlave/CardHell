@@ -50,7 +50,14 @@ public class EnemyAttackSpawner : MonoBehaviour
             Bullet bullet = bulletPool.Get(spawn);
             if (bullet != null)
             {
-                bullet.Init(spawn, Vector2.down * bulletSpeed, 1, bulletLifeTime, bulletPool, arenaBounds);
+                bullet.Init(
+                    spawn,
+                    Vector2.down * bulletSpeed,
+                    bulletLifeTime,
+                    bulletPool,
+                    arenaBounds,
+                    null,
+                    1);
             }
 
             yield return new WaitForSeconds(spawnInterval);
