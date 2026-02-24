@@ -8,8 +8,10 @@ public class AttackPatternData : ScriptableObject
     public float waveDuration = 6f;
     public float spawnInterval = 0.15f;
     public float bulletSpeed = 6f;
-    public int bulletDamage = 1;
+    public int bulletDamageOverride = -1;
     public int bulletsPerSpawn = 6;
     public float extraA;
     public float extraB;
+    public float extraC;
+    public BulletProfileData bulletProfile;
 }
