@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class BulletPool : MonoBehaviour
 {
-    public Bullet bulletPrefab;
-    public int prewarmCount = 80;
-    public Transform bulletsRoot;
+    [SerializeField] private Bullet bulletPrefab;
+    [SerializeField] private int prewarmCount = 80;
+    [SerializeField] private Transform bulletsRoot;
 
     private readonly Queue<Bullet> available = new Queue<Bullet>();
 
@@ -36,20 +36,19 @@ public class BulletPool : MonoBehaviour
 
         bullet.transform.SetParent(bulletsRoot);
         bullet.transform.position = position;
-        bullet.gameObject.SetActive(true);
         return bullet;
     }
 
-    public void Return(Bullet b)
+    public void Return(Bullet bullet)
     {
-        if (b == null)
+        if (bullet == null)
         {
             return;
         }
 
-        b.gameObject.SetActive(false);
-        b.transform.SetParent(bulletsRoot);
-        available.Enqueue(b);
+        bullet.gameObject.SetActive(false);
+        bullet.transform.SetParent(bulletsRoot);
+        available.Enqueue(bullet);
     }
 
     private Bullet CreateBullet()

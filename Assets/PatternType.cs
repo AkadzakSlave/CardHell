@@ -3,5 +3,9 @@ public enum PatternType
     Rain,
     Homing,
     PointBurst,
-    SideStream
+    SideStream,
+    Spiral,
+    RingPulse,
+    AimBurst,
+    SineRain
 }
