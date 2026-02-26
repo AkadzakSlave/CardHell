@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41433275b7e84a7458f0671e10e3a556, type: 3}
-  m_Name: Enm_2_Hrts 1
+  m_Name: 4H
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
-  id: 2
-  displayName: 2 Hearts
-  enemySprite: {fileID: -8770485552134275825, guid: 15f2873a981de8741838f65cce98cd7e, type: 3}
+  id: 4
+  displayName: 4 Heart
+  enemySprite: {fileID: -1849356408128331840, guid: 9bbbf92093cfe4c41a003dfbe8d9ccbd, type: 3}
   maxHP: 100
   coinsReward: 5
   patterns:
