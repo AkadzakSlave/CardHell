@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c28318d0f8ee85d458286196fc9101eb, type: 3}
-  m_Name: Spiral
+  m_Name: SideStream
   m_EditorClassIdentifier: Assembly-CSharp::AttackPatternData
-  id: Spiral
-  type: 4
-  waveDuration: 4
-  spawnInterval: 0.3
-  bulletSpeed: 5
+  id: SideStream
+  type: 3
+  waveDuration: 6
+  spawnInterval: 0.22
+  bulletSpeed: 4
   bulletDamageOverride: -1
   bulletsPerSpawn: 8
-  extraA: 0
+  extraA: 0.35
   extraB: 0
-  extraC: 0.5
+  extraC: 0
   bulletProfile: {fileID: 11400000, guid: 9bb4ebb7439fc564bbc91ba2f336c42f, type: 2}

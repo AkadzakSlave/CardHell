@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackPatternData
   id: SineRain
   type: 7
-  waveDuration: 4
-  spawnInterval: 0.3
-  bulletSpeed: 5
+  waveDuration: 8
+  spawnInterval: 0.2
+  bulletSpeed: 4
   bulletDamageOverride: -1
   bulletsPerSpawn: 8
-  extraA: 0
-  extraB: 0
+  extraA: 2
+  extraB: 0.2
   extraC: 0
   bulletProfile: {fileID: 11400000, guid: 9bb4ebb7439fc564bbc91ba2f336c42f, type: 2}

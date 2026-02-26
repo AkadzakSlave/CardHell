@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: abc60977507124f4f972b3784ebc2937, type: 3}
-  m_Name: Bullet
+  m_Name: NeedleFast
   m_EditorClassIdentifier: Assembly-CSharp::BulletProfileData
-  id: 1
-  sprite: {fileID: -3078657655821614568, guid: dabb1290bfc7b7e48a9111a0c3294f7d, type: 3}
-  visualScale: {x: 0.9, y: 0.9}
+  id: 2
+  sprite: {fileID: 21300000, guid: 624d1bdcba96a4e42ab6feb46f65879e, type: 3}
+  visualScale: {x: 0.7, y: 1.2}
   hitboxRadius: 0.1
   tint: {r: 1, g: 1, b: 1, a: 1}
   useTrail: 0

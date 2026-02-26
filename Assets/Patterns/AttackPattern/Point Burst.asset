@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c28318d0f8ee85d458286196fc9101eb, type: 3}
-  m_Name: SideStream
+  m_Name: Point Burst
   m_EditorClassIdentifier: Assembly-CSharp::AttackPatternData
-  id: SideStream
-  type: 3
+  id: PointBurst
+  type: 2
   waveDuration: 4
-  spawnInterval: 0.3
-  bulletSpeed: 5
+  spawnInterval: 0.8
+  bulletSpeed: 4
   bulletDamageOverride: -1
-  bulletsPerSpawn: 8
+  bulletsPerSpawn: 10
   extraA: 0
   extraB: 0
   extraC: 0
