@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackPatternData
   id: Spiral
   type: 4
-  waveDuration: 7
-  spawnInterval: 0.6
+  waveDuration: 9
+  spawnInterval: 0.06
   bulletSpeed: 3
   bulletDamageOverride: -1
   bulletsPerSpawn: 8

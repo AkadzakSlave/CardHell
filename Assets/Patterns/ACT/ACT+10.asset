@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1996ba68630bda843961a89f63829c8b, type: 3}
   m_Name: ACT+10
   m_EditorClassIdentifier: Assembly-CSharp::ActOptionData
-  id: 1
+  id: 2
   displayName: act
-  friendshipDelta: 30
-  resultText: sosi
+  friendshipDelta: 10
+  resultText: +10 friend

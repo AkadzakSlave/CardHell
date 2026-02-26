@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BulletProfileData
   id: 3
   sprite: {fileID: 6500381883553370307, guid: 0902287f990eeca4684bf4fba068f491, type: 3}
-  visualScale: {x: 1.5, y: 1.5}
-  hitboxRadius: 0.16
+  visualScale: {x: 1, y: 1}
+  hitboxRadius: 0.1
   tint: {r: 1, g: 1, b: 1, a: 1}
   useTrail: 0
   baseDamage: 2

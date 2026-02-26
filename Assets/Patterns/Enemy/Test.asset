@@ -18,8 +18,8 @@ MonoBehaviour:
   maxHP: 12
   coinsReward: 5
   patterns:
+  - {fileID: 11400000, guid: 2cecad242458f3e45b3ddb0e942a096a, type: 2}
+  - {fileID: 11400000, guid: 397cd1c4076255845a9c9ad2b66b937a, type: 2}
   - {fileID: 11400000, guid: 2d8f12768a8c935418d985bbc08a4b9d, type: 2}
-  - {fileID: 11400000, guid: 7457e0164e7b4414da082424d6643add, type: 2}
-  - {fileID: 11400000, guid: 6aab9b2e0049c4c4f835b2c508ae88b3, type: 2}
   actOptions:
-  - {fileID: 11400000, guid: 4ae957121abd65546a827295be5c391d, type: 2}
+  - {fileID: 11400000, guid: 661d7e84568c88548a97685ef76d3ea2, type: 2}
