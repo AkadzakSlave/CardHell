@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,8 +5,7 @@ public class HpUIController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private PlayerHealth playerHealth;
-    [SerializeField] private TMP_Text hpText;
-    [SerializeField] private Text hpTextLegacy;
+    [SerializeField] private Text hpText;
     [SerializeField] private Image hpFillImage;
     [SerializeField] private RectTransform hpBarFill;
 
@@ -45,11 +43,6 @@ public class HpUIController : MonoBehaviour
         if (hpText != null)
         {
             hpText.text = label;
-        }
-
-        if (hpTextLegacy != null)
-        {
-            hpTextLegacy.text = label;
         }
 
         float ratio = maxHP > 0 ? hp / (float)maxHP : 0f;

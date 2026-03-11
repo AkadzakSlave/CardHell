@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(PlayerHealth))]
 public class PlayerHeartController : MonoBehaviour
 {
     [Header("Movement")]
@@ -11,7 +12,6 @@ public class PlayerHeartController : MonoBehaviour
 
     [Header("Health")]
     [SerializeField] private int maxHP = 20;
-    [SerializeField] private int hp;
     [SerializeField] private float invincibleDuration = 0.5f;
     [SerializeField] private float blinkInterval = 0.08f;
 
@@ -19,9 +19,7 @@ public class PlayerHeartController : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlayerHealth playerHealth;
 
-    public event Action<int, int> OnHealthChanged;
-
-    public int HP => playerHealth != null ? playerHealth.HP : hp;
+    public int HP => playerHealth != null ? playerHealth.HP : 0;
     public int MaxHP => playerHealth != null ? playerHealth.MaxHP : maxHP;
 
     private Rigidbody2D rb;
@@ -47,13 +45,6 @@ public class PlayerHeartController : MonoBehaviour
         if (playerHealth != null)
         {
             playerHealth.SetMaxHP(maxHP);
-            playerHealth.OnHealthChanged += HandlePlayerHealthChanged;
-            HandlePlayerHealthChanged(playerHealth.HP, playerHealth.MaxHP);
-        }
-        else
-        {
-            hp = Mathf.Max(0, maxHP);
-            OnHealthChanged?.Invoke(hp, maxHP);
         }
     }
 
@@ -97,11 +88,6 @@ public class PlayerHeartController : MonoBehaviour
         {
             playerHealth.TakeDamage(amount);
         }
-        else
-        {
-            hp = Mathf.Clamp(hp - amount, 0, maxHP);
-            OnHealthChanged?.Invoke(hp, maxHP);
-        }
 
         if (invincibilityCoroutine != null)
         {
@@ -113,9 +99,7 @@ public class PlayerHeartController : MonoBehaviour
 
     private void HandlePlayerHealthChanged(int currentHp, int currentMaxHP)
     {
-        hp = currentHp;
         maxHP = currentMaxHP;
-        OnHealthChanged?.Invoke(currentHp, currentMaxHP);
     }
 
     private IEnumerator InvincibilityRoutine()

@@ -9,7 +9,6 @@ public class DebugEnemySelectorUI : MonoBehaviour
     [SerializeField] private BattleController battleController;
     [SerializeField] private List<EnemyData> enemiesForChapter = new List<EnemyData>();
     [SerializeField] private TMP_Dropdown tmpDropdown;
-    [SerializeField] private Dropdown legacyDropdown;
 
     private int selectedIndex;
 
@@ -18,11 +17,6 @@ public class DebugEnemySelectorUI : MonoBehaviour
         if (tmpDropdown != null)
         {
             tmpDropdown.onValueChanged.AddListener(OnTMPDropdownChanged);
-        }
-
-        if (legacyDropdown != null)
-        {
-            legacyDropdown.onValueChanged.AddListener(OnLegacyDropdownChanged);
         }
     }
 
@@ -38,11 +32,6 @@ public class DebugEnemySelectorUI : MonoBehaviour
         {
             tmpDropdown.onValueChanged.RemoveListener(OnTMPDropdownChanged);
         }
-
-        if (legacyDropdown != null)
-        {
-            legacyDropdown.onValueChanged.RemoveListener(OnLegacyDropdownChanged);
-        }
     }
 
     public void ReloadEnemy()
@@ -51,11 +40,6 @@ public class DebugEnemySelectorUI : MonoBehaviour
     }
 
     private void OnTMPDropdownChanged(int index)
-    {
-        ApplySelection(index);
-    }
-
-    private void OnLegacyDropdownChanged(int index)
     {
         ApplySelection(index);
     }
@@ -90,11 +74,11 @@ public class DebugEnemySelectorUI : MonoBehaviour
             tmpDropdown.SetValueWithoutNotify(0);
         }
 
-        if (legacyDropdown != null)
+        if (tmpDropdown != null)
         {
-            legacyDropdown.ClearOptions();
-            legacyDropdown.AddOptions(names);
-            legacyDropdown.SetValueWithoutNotify(0);
+            tmpDropdown.ClearOptions();
+            tmpDropdown.AddOptions(names);
+            tmpDropdown.SetValueWithoutNotify(0);
         }
     }
 }

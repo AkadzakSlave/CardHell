@@ -557,7 +557,6 @@ MonoBehaviour:
   moveSpeed: 5
   arenaBounds: {fileID: 287658676}
   maxHP: 20
-  hp: 0
   invincibleDuration: 0.5
   blinkInterval: 0.07
   spriteRenderer: {fileID: 180055182}
@@ -1269,8 +1268,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HpUIController
   playerHealth: {fileID: 180055190}
-  hpText: {fileID: 0}
-  hpTextLegacy: {fileID: 2108994691}
+  hpText: {fileID: 2108994691}
   hpFillImage: {fileID: 696150624}
   hpBarFill: {fileID: 696150623}
 --- !u!1 &564846405
@@ -1342,6 +1340,7 @@ Transform:
   - {fileID: 198240830}
   - {fileID: 705704173}
   - {fileID: 287658674}
+  - {fileID: 842928891}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &665116884
@@ -1791,8 +1790,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 07d913099d2e4d34fa90c4e5d939b1a3, type: 2}
   - {fileID: 11400000, guid: a55c706816bc13e45b5ac3ee9d234607, type: 2}
   - {fileID: 11400000, guid: c31adb75eeacf1f4c9d7683d9f5d1fa2, type: 2}
+  - {fileID: 11400000, guid: 1bb6c3cfd126d20449511527e6bd039b, type: 2}
+  - {fileID: 11400000, guid: 20acc79277093cb45b6514c4c0831ae3, type: 2}
+  - {fileID: 11400000, guid: 889bc0406d4086a4c8f412a8d22bbc7f, type: 2}
+  - {fileID: 11400000, guid: 2a278ab989f6c44419c73d5dc2f59266, type: 2}
+  - {fileID: 11400000, guid: 974bad45bb5f33a4a841a4bd05580226, type: 2}
+  - {fileID: 11400000, guid: a75bd1242b8efbe4ca772577e9037dcb, type: 2}
+  - {fileID: 11400000, guid: 655acb589f2dff243b89393da14ff15b, type: 2}
   tmpDropdown: {fileID: 487214569}
-  legacyDropdown: {fileID: 0}
 --- !u!222 &789192443
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1801,6 +1806,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 789192439}
   m_CullTransparentMesh: 1
+--- !u!1 &842928890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 842928891}
+  - component: {fileID: 842928892}
+  m_Layer: 0
+  m_Name: BattleBootstrap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &842928891
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 842928890}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 639481490}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &842928892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 842928890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba226186aa5938845bf2f70b68e12b10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleBootstrap
+  battleController: {fileID: 1893836924}
+  defaultEnemy: {fileID: 11400000, guid: 07d913099d2e4d34fa90c4e5d939b1a3, type: 2}
 --- !u!1 &938657508
 GameObject:
   m_ObjectHideFlags: 0
